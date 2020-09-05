@@ -14,7 +14,8 @@ import numpy as np
 from PIL import Image
 import torch
 from torch.utils.data import Dataset
-
+from torchvision import transforms
+from torchvision.transforms import Resize
 
 class BasicDataset(Dataset):
     def __init__(self, imgs_dir, masks_dir, scale=1):
@@ -34,8 +35,8 @@ class BasicDataset(Dataset):
         w, h = pil_img.size
         newW, newH = int(scale * w), int(scale * h)
         assert newW > 0 and newH > 0, 'Scale is too small'
-        pil_img = pil_img.resize((newW, newH))
-
+        # pil_img = pil_img.resize([newW, newH])
+        pil_img = pil_img.resize([64,64])
         img_nd = np.array(pil_img)
 
         if len(img_nd.shape) == 2:

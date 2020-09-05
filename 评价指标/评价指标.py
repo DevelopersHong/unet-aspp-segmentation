@@ -73,17 +73,24 @@ if __name__ == '__main__':
     # 求miou，先求混淆矩阵，混淆矩阵的每一行再加上每一列，最后减去对角线上的值；
     # imgPredict = np.array([[0, 0, 1, 0], [1, 1, 0, 2], [2, 2, 1 ,0]])
     # imgLabel = np.array([[0, 0, 0, 1], [1, 1, 2, 2], [2, 2, 0, 0]])
-    i = 0
-    for i in range(20):
-        imgPredict_0 = cv2.imread("datas/test/outputs/20_"+str(i)+"/20_"+str(i)+"_0.png")
-        imgPredict_1 = cv2.imread("datas/test/outputs/20_"+str(i)+"/20_"+str(i)+"_1.png")
-        imgPredict_2 = cv2.imread("datas/test/outputs/20_"+str(i)+"/20_"+str(i)+"_2.png")
-        imgLabel = cv2.imread("datas/mask/20_"+str(i)+".png")
+    
+    for i in range(35):
+        imgPredict_0 = cv2.imread("Hippocampus_data/test/output00/001_"+str(i)+"/001_"+str(i)+"_0.png")
+        imgPredict_1 = cv2.imread("Hippocampus_data/test/output00/001_"+str(i)+"/001_"+str(i)+"_1.png")
+        imgPredict_2 = cv2.imread("Hippocampus_data/test/output00/001_"+str(i)+"/001_"+str(i)+"_2.png")
+        # imgPredict_3 = cv2.imread("BrainTumour_data/test/output60/003_"+str(i)+"/003_"+str(i)+"_3.png")
+        imgPredict_0[imgPredict_0 == 255] = 1 
+        imgPredict_1[imgPredict_1 == 255] = 1
+        imgPredict_2[imgPredict_2 == 255] = 1
+        # imgPredict_3[imgPredict_3 == 255] = 1
+
+        imgLabel = cv2.imread("/media/zihong/Cai zihong/train_data/Medical Segmentation Decathlon/Task04_Hippocampus/labels_train/001_"+str(i)+".png")
 
         # 设置成两类与预测图对应
         imgLabel_0 = imgLabel.copy()
         imgLabel_1 = imgLabel.copy()
         imgLabel_2 = imgLabel.copy()
+        # imgLabel_3 = imgLabel.copy()
 
         imgLabel_0[imgLabel >= 1] = 1  # 背景1和目标0
         height, width, channels = imgLabel_0.shape # 反转
@@ -93,16 +100,20 @@ if __name__ == '__main__':
                     pv = imgLabel_0[row, list, c]
                     imgLabel_0[row, list, c] = 1 - pv
 
-        imgLabel_1[imgLabel >= 2] = 0  # 把第二类归为背景
+        imgLabel_1[imgLabel != 1] = 0  # 把第二类归为背景
 
-        imgLabel_2[imgLabel == 1] = 0  # 把第一类归为背景
-        imgLabel_2[imgLabel == 2] = 1
+        imgLabel_2[imgLabel != 2] = 0  # 把第一类归为背景
+        imgLabel_2[imgLabel_2 == 2] = 1
+
+        # imgLabel_3[imgLabel != 3] = 0
+        # imgLabel_3[imgLabel_3 == 3] = 1
         
         print(i)
 
         meansure_pa_miou(2, imgLabel_0, imgPredict_0)
         meansure_pa_miou(2, imgLabel_1, imgPredict_1)
         meansure_pa_miou(2, imgLabel_2, imgPredict_2)
+        # meansure_pa_miou(2, imgLabel_3, imgPredict_3)
 
 
     

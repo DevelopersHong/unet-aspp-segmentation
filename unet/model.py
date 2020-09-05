@@ -24,6 +24,7 @@ class UNet(nn.Module):
         self.down2 = Down(128, 256)
         self.down3 = Down(256, 512)
         self.down4 = Down(512, 512)
+        ##self.aspp = ASPP(512, 512)
         self.up1 = Up(1024, 256, self.bilinear)
         self.up2 = Up(512, 128, self.bilinear)
         self.up3 = Up(256, 64, self.bilinear)
@@ -37,6 +38,7 @@ class UNet(nn.Module):
         x3 = self.down2(x2)
         x4 = self.down3(x3)
         x5 = self.down4(x4)
+        # x5 = self.aspp(x5)## ASPP
         x = self.up1(x5, x4)
         x = self.up2(x, x3)
         x = self.up3(x, x2)
@@ -65,6 +67,7 @@ class NestedUNet(nn.Module):
         self.conv2_0 = VGGBlock(nb_filter[1], nb_filter[2], nb_filter[2])
         self.conv3_0 = VGGBlock(nb_filter[2], nb_filter[3], nb_filter[3])
         self.conv4_0 = VGGBlock(nb_filter[3], nb_filter[4], nb_filter[4])
+        self.aspp = ASPP(nb_filter[4], nb_filter[4])
 
         self.conv0_1 = VGGBlock(
             nb_filter[0]+nb_filter[1], nb_filter[0], nb_filter[0])
@@ -117,6 +120,7 @@ class NestedUNet(nn.Module):
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, self.up(x1_2)], 1))
 
         x4_0 = self.conv4_0(self.pool(x3_0))
+        x4_0 = self.aspp(x4_0)## ASPP
         x3_1 = self.conv3_1(torch.cat([x3_0, self.up(x4_0)], 1))
         x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, self.up(x3_1)], 1))
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, self.up(x2_2)], 1))

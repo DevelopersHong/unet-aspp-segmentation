@@ -11,7 +11,7 @@
 ## 环境配置
 
 ```
-virtualenv  环境名  -python=python3.6 ##create 环境
+virtualenv  环境名  --python=python3.6 ##create 环境
 
 source env36/bin/activate ##进入环境
 
